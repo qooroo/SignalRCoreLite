@@ -1,31 +1,39 @@
-﻿using System.Buffers;
+﻿using System;
+using System.Buffers;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using BusinessLogic;
+using Infrastructure;
+using Messages;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Http.Connections.Features;
 
 namespace SignalRCoreLite
 {
-    public class MessagesConnectionHandler : ConnectionHandler
+    public class MessagesConnectionHandler : ConnectionHandler, IClientResponseGateway
     {
-        private readonly Ingress _ingress;
+        private readonly string _id;
+        private readonly Agent _agent;
+        private readonly InstrumentationMessage _inst = new InstrumentationMessage();
 
         private ConnectionList Connections { get; } = new ConnectionList();
 
-        public MessagesConnectionHandler(Ingress ingress)
+        public MessagesConnectionHandler(Agent agent)
         {
-            _ingress = ingress;
+            _id = Guid.NewGuid().ToString();
+            _agent = agent;
+            _agent.Publish(new GatewayMessage(this));
         }
 
         public override async Task OnConnectedAsync(ConnectionContext connection)
         {
+            System.Console.WriteLine($"OnConnected @ {_id}");
+
             Connections.Add(connection);
 
             var transportType = connection.Features.Get<IHttpTransportFeature>()?.TransportType;
 
-            _ingress.OnMessage($"{connection.ConnectionId} connected ({transportType})");
+            _agent.Publish(StringMessage.Create($"{connection.ConnectionId}>({transportType})"));
 
             try
             {
@@ -39,7 +47,11 @@ namespace SignalRCoreLite
                         if (!buffer.IsEmpty)
                         {
                             var s = Encoding.UTF8.GetString(buffer.ToArray());
-                            _ingress.OnMessage($"{connection.ConnectionId} sent {s}");
+
+                            System.Console.WriteLine($"publishing message from {_id}");
+                            _agent.Publish(StringMessage.Create($"{connection.ConnectionId}>{s}"));
+                            // manual trigger of instrumentation
+                            if (s == "i") _agent.Publish(_inst);
                         }
                         else if (result.IsCompleted)
                         {
@@ -56,18 +68,24 @@ namespace SignalRCoreLite
             {
                 Connections.Remove(connection);
 
-                _ingress.OnMessage($"{connection.ConnectionId} disconnected ({transportType})");
+                _agent.Publish(StringMessage.Create($"{connection.ConnectionId}!>({transportType})"));
             }
         }
 
-        //private Task Broadcast(string text)
-        //{
-        //    return Broadcast(Encoding.UTF8.GetBytes(text));
-        //}
+        public Task Broadcast(string message)
+        {
+           return Broadcast(Encoding.UTF8.GetBytes(message));
+        }
 
-        //private Task Broadcast(byte[] payload)
-        //{
-        //    return Task.WhenAll(Connections.Select(x => x.Transport.Output.WriteAsync(payload).AsTask()));
-        //}
+        private Task Broadcast(byte[] payload)
+        {
+           return Task.WhenAll(Connections.Select(x => x.Transport.Output.WriteAsync(payload).AsTask()));
+        }
+
+        public Task Send(string connectionId, string message)
+        {
+            var connection = Connections[connectionId];
+            return connection.Transport.Output.WriteAsync(Encoding.UTF8.GetBytes(message)).AsTask();
+        }
     }
 }

@@ -5,28 +5,6 @@ using System.Threading;
 
 namespace Infrastructure
 {
-    public interface IAgent { }
-
-    public interface IMessageProcessor
-    {
-        void OnMessage(IMessage message);
-    }
-
-    public interface IMessage
-    {
-
-    }
-
-    public interface IErrorHandler
-    {
-        bool OnError(string agentName, Exception exception);
-    }
-
-    public interface IInstrumentationHandler
-    {
-        void OnInstrumentation(AgentStatistics agentStatistics);
-    }
-
     public class Agent : IAgent
     {
         private readonly IMessageProcessor _messageProcessor;
@@ -58,8 +36,6 @@ namespace Infrastructure
         {
             if (_running)
             {
-                // we send a poison pill message to the agent. This allows the agent 
-                // to process any pending message and then excit
                 Publish(new PoisonPillMessage());
                 _thread.Join(1000);
             }

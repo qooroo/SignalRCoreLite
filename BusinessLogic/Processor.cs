@@ -1,25 +1,46 @@
 ﻿using System;
-using System.Reactive.Linq;
+using System.Threading;
+using Infrastructure;
+using Infrastructure.Stats;
+using Messages;
 
 namespace BusinessLogic
 {
-    public class Processor
+    public class Processor : IMessageProcessor, IInstrumentationHandler
     {
-        private readonly Ingress _ingress;
+        private IClientResponseGateway _clientResponseGateway;
 
-        public Processor(Ingress ingress)
+        public void OnInstrumentation(AgentStatistics s)
         {
-            _ingress = ingress;
+            Console.WriteLine($"Msg count: {s.MessageCount} Av msg time: {s.AverageProcessingTimeMs} Max msg time: {s.MaxProcessingTimeMs}");
         }
 
-        public void Run()
+        public void OnMessage(IMessage message)
         {
-            _ingress.IngressMessages.Subscribe(Handle);
-        }
+            Console.WriteLine($"Processing on thread {Thread.CurrentThread.Name}:${Thread.CurrentThread.ManagedThreadId}");
 
-        private void Handle(string message)
-        {
-            Console.WriteLine($"Processing: {message}");
+            switch (message){
+                case StringMessage s:
+                    Console.WriteLine($"Processing: {s.S}");
+                    try
+                    {
+                        if (s.S.Split('>')[1] == "b")
+                        {
+                            _clientResponseGateway.Broadcast("heelo everybody!");    
+                        }
+                        if (s.S.Split('>')[1] == "r")
+                        {
+                            _clientResponseGateway.Send(s.S.Split('>')[0], "reply just to you!");
+                        }
+                    }
+                    catch {
+                        Console.WriteLine("BOOM!");
+                    }
+                    break;
+                case GatewayMessage g:
+                    _clientResponseGateway = g.ClientResponseGateway;
+                    break;
+            }
         }
     }
 }
