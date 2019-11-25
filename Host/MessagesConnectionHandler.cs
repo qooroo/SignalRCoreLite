@@ -13,12 +13,12 @@ namespace SignalRCoreLite
     public class MessagesConnectionHandler : ConnectionHandler, IClientResponseGateway
     {
         private readonly string _id;
-        private readonly Agent _agent;
-        private readonly InstrumentationMessage _inst = new InstrumentationMessage();
+        private readonly Worker _agent;
+        private readonly StatsMessage _inst = new StatsMessage();
 
         private ConnectionList Connections { get; } = new ConnectionList();
 
-        public MessagesConnectionHandler(Agent agent)
+        public MessagesConnectionHandler(Worker agent)
         {
             _id = Guid.NewGuid().ToString();
             _agent = agent;

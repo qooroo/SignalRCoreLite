@@ -5,23 +5,19 @@ using System.Diagnostics;
 
 namespace Infrastructure.Stats
 {
-    public class AgentStatistics
+    public class WorkerStats
     {
         static readonly double TicksPerMillisecond = Stopwatch.Frequency / 1000d;
 
-        public AgentStatistics(List<MessageStat> stats)
+        public WorkerStats(List<MessageStat> stats)
         {
             MessageCount = stats.Count;
             if (stats.Count > 0)
             {
                 MaxQueueDelayMs = Math.Round((from s in stats select s.SubmittedToStarted).Max() / TicksPerMillisecond, 3);
                 AverageQueueDelayMs = Math.Round((from s in stats select s.SubmittedToStarted).Average() / TicksPerMillisecond, 3);
-                MaxProcessingTimeMs = Math.Round(
-                    (from s in stats select s.SubmittedToCompleted - s.SubmittedToStarted).Max() / TicksPerMillisecond,
-                    3);
-                AverageProcessingTimeMs = Math.Round(
-                    (from s in stats select s.SubmittedToCompleted - s.SubmittedToStarted).Average() / TicksPerMillisecond,
-                    3);
+                MaxProcessingTimeMs = Math.Round((from s in stats select s.SubmittedToCompleted - s.SubmittedToStarted).Max() / TicksPerMillisecond, 3);
+                AverageProcessingTimeMs = Math.Round((from s in stats select s.SubmittedToCompleted - s.SubmittedToStarted).Average() / TicksPerMillisecond, 3);
                 MaxQueueLength = (from s in stats select s.QueueLength).Max();
             }
         }

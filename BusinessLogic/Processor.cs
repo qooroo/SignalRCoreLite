@@ -6,11 +6,11 @@ using Messages;
 
 namespace BusinessLogic
 {
-    public class Processor : IMessageProcessor, IInstrumentationHandler
+    public class Processor : IMessageProcessor, IStatsHandler
     {
         private IClientResponseGateway _clientResponseGateway;
 
-        public void OnInstrumentation(AgentStatistics s)
+        public void OnStats(WorkerStats s)
         {
             Console.WriteLine($"Msg count: {s.MessageCount} Av msg time: {s.AverageProcessingTimeMs} Max msg time: {s.MaxProcessingTimeMs}");
         }

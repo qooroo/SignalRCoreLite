@@ -2,9 +2,9 @@
 
 namespace Infrastructure.Stats
 {
-    internal class AgentItem
+    internal class WorkerItem
     {
-        public AgentItem(IMessage message)
+        public WorkerItem(IMessage message)
         {
             _stopwatch = new Stopwatch();
             _stopwatch.Start();

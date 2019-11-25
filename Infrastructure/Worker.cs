@@ -5,11 +5,11 @@ using System.Threading;
 
 namespace Infrastructure
 {
-    public class Agent : IAgent
+    public class Worker : IWorker
     {
         private readonly IMessageProcessor _messageProcessor;
         private readonly IErrorHandler _errorHandler;
-        private readonly BlockingCollection<AgentItem> _queue = new BlockingCollection<AgentItem>();
+        private readonly BlockingCollection<WorkerItem> _queue = new BlockingCollection<WorkerItem>();
         private readonly StatBuffer<MessageStat> _stats = new StatBuffer<MessageStat>(5000);
 
         private Thread _thread;
@@ -17,7 +17,7 @@ namespace Infrastructure
 
         public string Name { get; }
 
-        public Agent(string name, IMessageProcessor messageProcessor, IErrorHandler errorHandler)
+        public Worker(string name, IMessageProcessor messageProcessor, IErrorHandler errorHandler)
         {
             _messageProcessor = messageProcessor;
             _errorHandler = errorHandler;
@@ -36,7 +36,7 @@ namespace Infrastructure
         {
             if (_running)
             {
-                Publish(new PoisonPillMessage());
+                Publish(new KillMessage());
                 _thread.Join(1000);
             }
         }
@@ -53,14 +53,14 @@ namespace Infrastructure
                     item.MarkStarted();
 
 
-                    if (item.Type == nameof(PoisonPillMessage))
+                    if (item.Type == nameof(KillMessage))
                     {
                         _running = false;
                     }
-                    else if (item.Type == nameof(InstrumentationMessage))
+                    else if (item.Type == nameof(StatsMessage))
                     {
-                        var instrumentedMessageProcessor = _messageProcessor as IInstrumentationHandler;
-                        instrumentedMessageProcessor?.OnInstrumentation(new AgentStatistics(_stats.GetBatch()));
+                        var instrumentedMessageProcessor = _messageProcessor as IStatsHandler;
+                        instrumentedMessageProcessor?.OnStats(new WorkerStats(_stats.GetBatch()));
                     }
                     else
                     {
@@ -81,7 +81,7 @@ namespace Infrastructure
 
         public void Publish(IMessage message)
         {
-            _queue.Add(new AgentItem(message));
+            _queue.Add(new WorkerItem(message));
         }
     }
 }

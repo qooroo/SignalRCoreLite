@@ -16,14 +16,14 @@ namespace Host
         public static void Main()
         {
             var p = new Processor();
-            var agent = new Agent("Model", p, null);
+            var agent = new Worker("Model", p, null);
 
             var host = new WebHostBuilder()
                 .ConfigureLogging(factory => factory.AddConsole())
                 .UseKestrel(options => options.ListenLocalhost(5000))
                 .ConfigureServices(services =>{
                     services.AddSingleton(typeof(Processor), p);
-                    services.AddSingleton(typeof(Agent), agent);
+                    services.AddSingleton(typeof(Worker), agent);
                     services.AddSignalR(options => options.KeepAliveInterval = TimeSpan.FromSeconds(5));
                 })
                 .Configure(app => {
