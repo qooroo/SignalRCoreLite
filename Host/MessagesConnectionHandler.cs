@@ -8,17 +8,17 @@ using Messages;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Http.Connections.Features;
 
-namespace SignalRCoreLite
+namespace Host
 {
     public class MessagesConnectionHandler : ConnectionHandler, IClientResponseGateway
     {
         private readonly string _id;
-        private readonly Worker _agent;
+        private readonly Agent _agent;
         private readonly StatsMessage _inst = new StatsMessage();
 
         private ConnectionList Connections { get; } = new ConnectionList();
 
-        public MessagesConnectionHandler(Worker agent)
+        public MessagesConnectionHandler(Agent agent)
         {
             _id = Guid.NewGuid().ToString();
             _agent = agent;
@@ -27,7 +27,7 @@ namespace SignalRCoreLite
 
         public override async Task OnConnectedAsync(ConnectionContext connection)
         {
-            System.Console.WriteLine($"OnConnected @ {_id}");
+            Console.WriteLine($"OnConnected @ {_id}");
 
             Connections.Add(connection);
 
@@ -48,7 +48,7 @@ namespace SignalRCoreLite
                         {
                             var s = Encoding.UTF8.GetString(buffer.ToArray());
 
-                            System.Console.WriteLine($"publishing message from {_id}");
+                            Console.WriteLine($"publishing message from {_id}");
                             _agent.Publish(StringMessage.Create($"{connection.ConnectionId}>{s}"));
                             // manual trigger of instrumentation
                             if (s == "i") _agent.Publish(_inst);
@@ -72,15 +72,9 @@ namespace SignalRCoreLite
             }
         }
 
-        public Task Broadcast(string message)
-        {
-           return Broadcast(Encoding.UTF8.GetBytes(message));
-        }
+        public Task Broadcast(string message) => Broadcast(Encoding.UTF8.GetBytes(message));
 
-        private Task Broadcast(byte[] payload)
-        {
-           return Task.WhenAll(Connections.Select(x => x.Transport.Output.WriteAsync(payload).AsTask()));
-        }
+        private Task Broadcast(byte[] payload) => Task.WhenAll(Connections.Select(x => x.Transport.Output.WriteAsync(payload).AsTask()));
 
         public Task Send(string connectionId, string message)
         {

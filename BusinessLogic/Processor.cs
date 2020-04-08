@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using System.Threading.Tasks;
 using Infrastructure;
 using Infrastructure.Stats;
 using Messages;
@@ -9,6 +10,7 @@ namespace BusinessLogic
     public class Processor : IMessageProcessor, IStatsHandler
     {
         private IClientResponseGateway _clientResponseGateway;
+        private Agent _agent;
 
         public void OnStats(WorkerStats s)
         {
@@ -32,6 +34,18 @@ namespace BusinessLogic
                         {
                             _clientResponseGateway.Send(s.S.Split('>')[0], "reply just to you!");
                         }
+                        if (s.S.Split('>')[1] == "tp")
+                        {
+                            Task.Run(() =>
+                            {
+                                Console.WriteLine($"Doing long running work on thread {Thread.CurrentThread.Name}");
+                                Thread.Sleep(TimeSpan.FromSeconds(5));
+                                var result = Guid.NewGuid().ToString().Substring(0, 4);
+                                Console.WriteLine($"Calculated long running result: {result}");
+                                _agent.Publish(ThreadPoolProcessedMessage.Create(s.S.Split('>')[0], result));
+                            });
+                            _clientResponseGateway.Send(s.S.Split('>')[0], "processing message bound for the threadpool");
+                        }
                     }
                     catch {
                         Console.WriteLine("BOOM!");
@@ -40,7 +54,16 @@ namespace BusinessLogic
                 case GatewayMessage g:
                     _clientResponseGateway = g.ClientResponseGateway;
                     break;
+                case ThreadPoolProcessedMessage tp:
+                    Console.WriteLine($"Received result {tp.S} on thread {Thread.CurrentThread.Name}");
+                    _clientResponseGateway.Send(tp.ReplyTo, $"Threadpool processed result: {tp.S}");
+                    break;
             }
+        }
+
+        public void InitPublisher(Agent agent)
+        {
+            _agent = agent;
         }
     }
 }

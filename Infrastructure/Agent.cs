@@ -5,7 +5,7 @@ using System.Threading;
 
 namespace Infrastructure
 {
-    public class Worker : IWorker
+    public class Agent : IWorker
     {
         private readonly IMessageProcessor _messageProcessor;
         private readonly IErrorHandler _errorHandler;
@@ -17,7 +17,7 @@ namespace Infrastructure
 
         public string Name { get; }
 
-        public Worker(string name, IMessageProcessor messageProcessor, IErrorHandler errorHandler)
+        public Agent(string name, IMessageProcessor messageProcessor, IErrorHandler errorHandler)
         {
             _messageProcessor = messageProcessor;
             _errorHandler = errorHandler;
