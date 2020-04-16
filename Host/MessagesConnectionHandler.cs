@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Http.Connections.Features;
 
 namespace Host
 {
-    public class MessagesConnectionHandler : ConnectionHandler, IClientResponseGateway
+    public class MessagesConnectionHandler : ConnectionHandler, IClientPublisher
     {
         private readonly string _id;
         private readonly Agent _agent;
@@ -22,7 +22,7 @@ namespace Host
         {
             _id = Guid.NewGuid().ToString();
             _agent = agent;
-            _agent.Publish(new GatewayMessage(this));
+            _agent.Publish(new ClientPublisherMessage(this));
         }
 
         public override async Task OnConnectedAsync(ConnectionContext connection)

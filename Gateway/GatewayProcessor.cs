@@ -5,11 +5,12 @@ using Infrastructure;
 using Infrastructure.Stats;
 using Messages;
 
-namespace BusinessLogic
+namespace Gateway
 {
-    public class Processor : IMessageProcessor, IStatsHandler
+
+    public class GatewayProcessor : IBusinessLogicProcessor
     {
-        private IClientResponseGateway _clientResponseGateway;
+        private IClientPublisher _clientPublisher;
         private Agent _agent;
 
         public void OnStats(WorkerStats s)
@@ -28,11 +29,11 @@ namespace BusinessLogic
                     {
                         if (s.S.Split('>')[1] == "b")
                         {
-                            _clientResponseGateway.Broadcast("heelo everybody!");    
+                            _clientPublisher.Broadcast("heelo everybody!");    
                         }
                         if (s.S.Split('>')[1] == "r")
                         {
-                            _clientResponseGateway.Send(s.S.Split('>')[0], "reply just to you!");
+                            _clientPublisher.Send(s.S.Split('>')[0], "reply just to you!");
                         }
                         if (s.S.Split('>')[1] == "tp")
                         {
@@ -44,19 +45,19 @@ namespace BusinessLogic
                                 Console.WriteLine($"Calculated long running result: {result}");
                                 _agent.Publish(ThreadPoolProcessedMessage.Create(s.S.Split('>')[0], result));
                             });
-                            _clientResponseGateway.Send(s.S.Split('>')[0], "processing message bound for the threadpool");
+                            _clientPublisher.Send(s.S.Split('>')[0], "processing message bound for the threadpool");
                         }
                     }
                     catch {
                         Console.WriteLine("BOOM!");
                     }
                     break;
-                case GatewayMessage g:
-                    _clientResponseGateway = g.ClientResponseGateway;
+                case ClientPublisherMessage g:
+                    _clientPublisher = g.ClientPublisher;
                     break;
                 case ThreadPoolProcessedMessage tp:
                     Console.WriteLine($"Received result {tp.S} on thread {Thread.CurrentThread.Name}");
-                    _clientResponseGateway.Send(tp.ReplyTo, $"Threadpool processed result: {tp.S}");
+                    _clientPublisher.Send(tp.ReplyTo, $"Threadpool processed result: {tp.S}");
                     break;
             }
         }

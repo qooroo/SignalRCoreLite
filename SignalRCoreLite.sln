@@ -11,6 +11,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messages", "Messages\Messag
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{116D980F-B89D-4E6E-8B54-5B4F22E4DA12}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestClient", "TestClient\TestClient.csproj", "{E0C59C57-BFD2-40A6-B0B2-F4F05E4AE4CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gateway", "Gateway\Gateway.csproj", "{DF30CB14-7AE1-438B-B435-250BACD0DBE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{116D980F-B89D-4E6E-8B54-5B4F22E4DA12}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{116D980F-B89D-4E6E-8B54-5B4F22E4DA12}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{116D980F-B89D-4E6E-8B54-5B4F22E4DA12}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E0C59C57-BFD2-40A6-B0B2-F4F05E4AE4CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0C59C57-BFD2-40A6-B0B2-F4F05E4AE4CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0C59C57-BFD2-40A6-B0B2-F4F05E4AE4CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0C59C57-BFD2-40A6-B0B2-F4F05E4AE4CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF30CB14-7AE1-438B-B435-250BACD0DBE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF30CB14-7AE1-438B-B435-250BACD0DBE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF30CB14-7AE1-438B-B435-250BACD0DBE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF30CB14-7AE1-438B-B435-250BACD0DBE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
