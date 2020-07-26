@@ -74,7 +74,8 @@ namespace Host
 
         public Task Broadcast(string message) => Broadcast(Encoding.UTF8.GetBytes(message));
 
-        private Task Broadcast(byte[] payload) => Task.WhenAll(Connections.Select(x => x.Transport.Output.WriteAsync(payload).AsTask()));
+        private Task Broadcast(byte[] payload) =>
+            Task.WhenAll(Connections.Select(x => x.Transport.Output.WriteAsync(payload).AsTask()));
 
         public Task Send(string connectionId, string message)
         {

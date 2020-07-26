@@ -29,7 +29,7 @@ namespace Host
                     Launch(new GatewayProcessor(), LaunchProperties[Gateway]);
                     break;
                 case Cluster:
-                    Launch(new BusinessLogicProcessor(),  LaunchProperties[Cluster]);
+                    Launch(new ClusterProcessor(),  LaunchProperties[Cluster]);
                     break;
                 default:
                     Console.WriteLine("\nRun with args: gateway|cluster\n");

@@ -7,7 +7,7 @@ using Messages;
 namespace BusinessLogic
 {
 
-    public class BusinessLogicProcessor : IBusinessLogicProcessor
+    public class ClusterProcessor : IBusinessLogicProcessor
     {
         private IServicePublisher _gatewayPubilsher;
         private Agent _agent;

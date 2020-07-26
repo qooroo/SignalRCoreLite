@@ -11,6 +11,7 @@ namespace Gateway
     public class GatewayProcessor : IBusinessLogicProcessor
     {
         private IClientPublisher _clientPublisher;
+        private IServicePublisher _clusterPublisher;
         private Agent _agent;
 
         public void OnStats(WorkerStats s)
