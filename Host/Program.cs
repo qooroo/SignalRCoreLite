@@ -15,7 +15,7 @@ namespace Host
         private const string Gateway = "gateway";
         private const string Cluster = "cluster";
 
-        private static Dictionary<string, dynamic> LaunchProperties = new Dictionary<string, dynamic>
+        private static readonly Dictionary<string, dynamic> LaunchProperties = new Dictionary<string, dynamic>
         {
             {Gateway, new {port = 5000}},
             {Cluster, new {port = 6000}}

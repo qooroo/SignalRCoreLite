@@ -52,7 +52,6 @@ namespace Infrastructure
                     item.SetQueueLength(_queue.Count);
                     item.MarkStarted();
 
-
                     if (item.Type == nameof(KillMessage))
                     {
                         _running = false;

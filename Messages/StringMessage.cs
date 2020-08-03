@@ -2,19 +2,15 @@ using Infrastructure;
 
 namespace Messages
 {
-    public class StringMessage : IMessage
+    public class StringMessage : IRequestReponseMessage, IPayloadMessage<string>
     {
-        private readonly string _s;
-        public string S => _s;
+        public string ReplyTo { get; }
+        public string Payload { get; }
 
-        public static StringMessage Create(string s)
+        public StringMessage(string replyTo, string payload)
         {
-            return new StringMessage(s);
-        }
-
-        private StringMessage(string s)
-        {
-            _s = s;
+            ReplyTo = replyTo;
+            Payload = payload;
         }
     }
 }

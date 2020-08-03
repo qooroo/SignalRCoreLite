@@ -1,5 +1,13 @@
 ﻿{
   "profiles": {
+    "Cluster": {
+      "commandName": "Project",
+      "launchBrowser": false,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "commandLineArgs": "cluster"
+    },
     "Gateway": {
       "commandName": "Project",
       "launchBrowser": false,

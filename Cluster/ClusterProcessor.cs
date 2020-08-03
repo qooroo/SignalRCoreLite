@@ -9,7 +9,7 @@ namespace BusinessLogic
 
     public class ClusterProcessor : IBusinessLogicProcessor
     {
-        private IServicePublisher _gatewayPubilsher;
+        private IServicePublisher _gatewayPublisher;
         private Agent _agent;
 
         public void OnStats(WorkerStats s)
@@ -26,11 +26,11 @@ namespace BusinessLogic
                     Console.WriteLine($"Processing: {s.S}");
                     break;
                 case GatewayPublisherMessage g:
-                    _gatewayPubilsher = g.ServicePublisher;
+                    _gatewayPublisher = g.ServicePublisher;
                     break;
                 case ThreadPoolProcessedMessage tp:
                     Console.WriteLine($"Received result {tp.S} on thread {Thread.CurrentThread.Name}");
-                    _gatewayPubilsher.Send(tp.ReplyTo, $"Threadpool processed result: {tp.S}");
+                    _gatewayPublisher.Send(tp.ReplyTo, $"Threadpool processed result: {tp.S}");
                     break;
             }
         }

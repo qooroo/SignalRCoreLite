@@ -7,7 +7,6 @@ using Messages;
 
 namespace Gateway
 {
-
     public class GatewayProcessor : IBusinessLogicProcessor
     {
         private IClientPublisher _clientPublisher;

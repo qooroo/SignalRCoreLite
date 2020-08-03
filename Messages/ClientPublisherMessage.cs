@@ -2,24 +2,13 @@ using Infrastructure;
 
 namespace Messages
 {
-    public class ClientPublisherMessage : IMessage
+    public class ClientPublisherMessage : IPayloadMessage<IClientPublisher>
     {
-        
-        public ClientPublisherMessage(IClientPublisher clientPublisher)
+        public IClientPublisher Payload { get; }
+
+        public ClientPublisherMessage(IClientPublisher payload)
         {
-            ClientPublisher = clientPublisher;
-        }
-
-        public IClientPublisher ClientPublisher { get; }
-    }
-
-    public class GatewayPublisherMessage
-    {
-        public IServicePublisher ServicePublisher { get; }
-
-        public GatewayPublisherMessage(IServicePublisher servicePublisher)
-        {
-            ServicePublisher = servicePublisher;
+            Payload = payload;
         }
     }
 }
