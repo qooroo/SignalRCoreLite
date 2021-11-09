@@ -3,26 +3,23 @@ using System.Buffers;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Infrastructure;
-using Messages;
 using Microsoft.AspNetCore.Connections;
 using Microsoft.AspNetCore.Http.Connections.Features;
 
-namespace Host
+namespace Infrastructure
 {
     public class MessagesConnectionHandler : ConnectionHandler, IClientResponseGateway
     {
         private readonly string _id;
         private readonly Agent _agent;
-        private readonly StatsMessage _inst = new StatsMessage();
+        private readonly StatsMessage _inst = new();
 
-        private ConnectionList Connections { get; } = new ConnectionList();
+        private ConnectionList Connections { get; } = new();
 
         public MessagesConnectionHandler(Agent agent)
         {
             _id = Guid.NewGuid().ToString();
             _agent = agent;
-            _agent.Publish(new GatewayMessage(this));
         }
 
         public override async Task OnConnectedAsync(ConnectionContext connection)

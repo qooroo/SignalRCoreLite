@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using Infrastructure;
-using Microsoft.AspNetCore.Connections;
 
 namespace Host
 {
@@ -15,6 +14,9 @@ namespace Host
         {
             var p = new Processor();
             var agent = new Agent("Model", p, null);
+            var messagesConnectionHandler = new MessagesConnectionHandler(agent);
+            
+            p.RegisterResponseChannel(messagesConnectionHandler);
             p.InitPublisher(agent);
 
             var host = new WebHostBuilder()
@@ -23,6 +25,7 @@ namespace Host
                 .ConfigureServices(services =>{
                     services.AddSingleton(typeof(Processor), p);
                     services.AddSingleton(typeof(Agent), agent);
+                    services.AddSingleton(typeof(MessagesConnectionHandler), messagesConnectionHandler);
                     services.AddSignalR(options => options.KeepAliveInterval = TimeSpan.FromSeconds(5));
                 })
                 .Configure(app => {

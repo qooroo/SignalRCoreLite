@@ -5,11 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.AspNetCore.Connections;
 
-namespace Host
+namespace Infrastructure
 {
     internal class ConnectionList : IReadOnlyCollection<ConnectionContext>
     {
-        private readonly ConcurrentDictionary<string, ConnectionContext> _connections = new ConcurrentDictionary<string, ConnectionContext>(StringComparer.Ordinal);
+        private readonly ConcurrentDictionary<string, ConnectionContext> _connections = new(StringComparer.Ordinal);
 
         public ConnectionContext this[string connectionId] => _connections.TryGetValue(connectionId, out var connection) ? connection : null;
 

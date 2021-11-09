@@ -1,11 +1,8 @@
-using Infrastructure;
-
-namespace Messages
+namespace Infrastructure
 {
     public class StringMessage : IMessage
     {
-        private readonly string _s;
-        public string S => _s;
+        public string S { get; }
 
         public static StringMessage Create(string s)
         {
@@ -14,7 +11,7 @@ namespace Messages
 
         private StringMessage(string s)
         {
-            _s = s;
+            S = s;
         }
     }
 }

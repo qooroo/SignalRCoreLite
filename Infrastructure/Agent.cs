@@ -9,8 +9,8 @@ namespace Infrastructure
     {
         private readonly IMessageProcessor _messageProcessor;
         private readonly IErrorHandler _errorHandler;
-        private readonly BlockingCollection<WorkerItem> _queue = new BlockingCollection<WorkerItem>();
-        private readonly StatBuffer<MessageStat> _stats = new StatBuffer<MessageStat>(5000);
+        private readonly BlockingCollection<WorkerItem> _queue = new();
+        private readonly StatBuffer<MessageStat> _stats = new(5000);
 
         private Thread _thread;
         private volatile bool _running;

@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Infrastructure;
 using Infrastructure.Stats;
-using Messages;
 
 namespace BusinessLogic
 {
@@ -28,7 +27,7 @@ namespace BusinessLogic
                     {
                         if (s.S.Split('>')[1] == "b")
                         {
-                            _clientResponseGateway.Broadcast("heelo everybody!");    
+                            _clientResponseGateway.Broadcast("hello everybody!");    
                         }
                         if (s.S.Split('>')[1] == "r")
                         {
@@ -40,19 +39,17 @@ namespace BusinessLogic
                             {
                                 Console.WriteLine($"Doing long running work on thread {Thread.CurrentThread.Name}");
                                 Thread.Sleep(TimeSpan.FromSeconds(5));
-                                var result = Guid.NewGuid().ToString().Substring(0, 4);
+                                var result = Guid.NewGuid().ToString()[..4];
                                 Console.WriteLine($"Calculated long running result: {result}");
                                 _agent.Publish(ThreadPoolProcessedMessage.Create(s.S.Split('>')[0], result));
                             });
                             _clientResponseGateway.Send(s.S.Split('>')[0], "processing message bound for the threadpool");
                         }
                     }
-                    catch {
+                    catch (Exception ex) {
                         Console.WriteLine("BOOM!");
+                        Console.WriteLine(ex.Message);
                     }
-                    break;
-                case GatewayMessage g:
-                    _clientResponseGateway = g.ClientResponseGateway;
                     break;
                 case ThreadPoolProcessedMessage tp:
                     Console.WriteLine($"Received result {tp.S} on thread {Thread.CurrentThread.Name}");
@@ -64,6 +61,11 @@ namespace BusinessLogic
         public void InitPublisher(Agent agent)
         {
             _agent = agent;
+        }
+
+        public void RegisterResponseChannel(IClientResponseGateway gateway)
+        {
+            _clientResponseGateway = gateway;
         }
     }
 }

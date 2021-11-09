@@ -1,14 +1,10 @@
-using Infrastructure;
-
-namespace Messages
+namespace Infrastructure
 {
     public class ThreadPoolProcessedMessage : IMessage
     {
-        private readonly string _s;
-        private readonly string _replyTo;
-        public string S => _s;
+        public string S { get; }
 
-        public string ReplyTo => _replyTo;
+        public string ReplyTo { get; }
 
         public static ThreadPoolProcessedMessage Create(string replyTo, string s)
         {
@@ -17,8 +13,8 @@ namespace Messages
 
         private ThreadPoolProcessedMessage(string replyTo, string s)
         {
-            _replyTo = replyTo;
-            _s = s;
+            ReplyTo = replyTo;
+            S = s;
         }
     }
 }

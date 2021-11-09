@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Stats
 {
-    public class MessageStat
+    public record class MessageStat
     {
         public Type MessageType { get; set; }
         public long SubmittedToStarted { get; set; }
